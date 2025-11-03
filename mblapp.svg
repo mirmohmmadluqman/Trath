@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Trath wordmark">
+  <defs>
+    <!-- Blue gradient matching the Trath mark -->
+    <!-- <linearGradient id="text-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#29d9ff"/>
+      <stop offset="48%" stop-color="#0096ff"/>
+      <stop offset="100%" stop-color="#004fc8"/>
+    </linearGradient> -->
+
+    <!-- Deep face gradient for subtle 3D -->
+    <linearGradient id="text-deep" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b67d8"/>
+      <stop offset="100%" stop-color="#032f6f"/>
+    </linearGradient>
+
+    <!-- glossy sheen -->
+    <linearGradient id="sheen" x1="0" y1="0" x2="0.7" y2="0.2">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- soft drop shadow -->
+    <filter id="drop" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="18" result="blur"/>
+      <feOffset dy="12" result="off"/>
+      <feColorMatrix in="off" type="matrix" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0   0 0 0 0.16" result="shadow"/>
+      <feBlend in="SourceGraphic" in2="shadow"/>
+    </filter>
+
+    <!-- subtle inner bevel -->
+    <filter id="innerBevel" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur2"/>
+      <feComposite in="SourceGraphic" in2="blur2" operator="over"/>
+    </filter>
+
+    <!-- crisp outer stroke for text -->
+    <filter id="textOutline" x="-20%" y="-20%" width="140%" height="140%">
+      <feMorphology operator="dilate" radius="0.5" in="SourceAlpha" result="dilated"/>
+      <feGaussianBlur in="dilated" stdDeviation="0.6" result="blurOutline"/>
+      <feColorMatrix in="blurOutline" type="matrix"
+        values="0 0 0 0 0.02  0 0 0 0 0.12  0 0 0 0 0.3  0 0 0 0.12" result="outline"/>
+      <feComposite in="outline" in2="SourceGraphic" operator="over"/>
+    </filter>
+
+    <!-- rounded card shape used as background (export-friendly) -->
+    <clipPath id="cardClip">
+      <rect x="64" y="64" width="896" height="896" rx="160" ry="160"/>
+    </clipPath>
+
+    <!-- a mask to optionally make text appear as 'cutout' (transparent inside card) -->
+    <mask id="cutoutMask">
+      <!-- full white = show, black = hide -->
+      <rect x="0" y="0" width="1024" height="1024" fill="white"/>
+      <!-- the rounded card remains, outside the card we keep white -->
+      <rect x="64" y="64" width="896" height="896" rx="160" ry="160" fill="black"/>
+      <!-- text area will cut through (white) -> we'll invert with mask on group if needed -->
+    </mask>
+  </defs>
+
+  <!-- Option A: Card background (light) with drop shadow -->
+  <g filter="url(#drop)">
+    <rect x="64" y="64" width="896" height="896" rx="160" ry="160" fill="#ffffff"/>
+  </g>
+
+  <!-- Very subtle card edge stroke -->
+  <rect x="64" y="64" width="896" height="896" rx="160" ry="160" fill="none" stroke="#f0f4f8" stroke-width="2"/>
+
+  <!-- Main wordmark: gradient fill + deep face for lower portion to emulate depth -->
+  <!-- We draw two layered text shapes: one for the bright gradient face, one overlaid darker at bottom to give volume -->
+  <g transform="translate(0,0)" clip-path="url(#cardClip)">
+    <!-- deep shadow face (slightly offset down-right) -->
+    <text x="512" y="520" text-anchor="middle" font-family="Inter, 'Segoe UI', Roboto, Arial, sans-serif"
+          font-weight="800" font-size="220" letter-spacing="-6" fill="url(#text-deep)" style="filter: url(#textOutline);">
+      Trath
+    </text>
+
+    <!-- bright gradient face -->
+    <text x="512" y="508" text-anchor="middle" font-family="Inter, 'Segoe UI', Roboto, Arial, sans-serif"
+          font-weight="800" font-size="220" letter-spacing="-6" fill="url(#text-grad)" style="filter: url(#textOutline);">
+      Trath
+    </text>
+
+    <!-- glossy sheen overlay -->
+    <text x="512" y="508" text-anchor="middle" font-family="Inter, 'Segoe UI', Roboto, Arial, sans-serif"
+          font-weight="800" font-size="220" letter-spacing="-6" fill="url(#sheen)" opacity="0.9" style="mix-blend-mode: screen;">
+      Trath
+    </text>
+
+    <!-- thin inner bevel highlight to add crispness -->
+    <text x="512" y="508" text-anchor="middle" font-family="Inter, 'Segoe UI', Roboto, Arial, sans-serif"
+          font-weight="800" font-size="220" letter-spacing="-6" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.8" paint-order="stroke">
+      Trath
+    </text>
+  </g>
+
+  <!-- If you prefer the text to be an actual cutout (transparent) inside the rounded card,
+       uncomment the group below and comment out the wordmark group above. -->
+  <!--
+  <g mask="url(#cutoutMask)">
+    <rect x="64" y="64" width="896" height="896" rx="160" ry="160" fill="#ffffff"/>
+    <text x="512" y="508" text-anchor="middle" font-family="Inter, 'Segoe UI', Roboto, Arial, sans-serif"
+          font-weight="800" font-size="220" letter-spacing="-6" fill="black">Trath</text>
+  </g>
+  -->
+
+  <!-- Accessibility: title -->
+  <title>Trath — wordmark</title>
+</svg>
