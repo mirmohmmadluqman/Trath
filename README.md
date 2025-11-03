@@ -1,10 +1,11 @@
 <p align="center">
   <a href="https://anza.xyz">
-    <img alt="Anza" src="https://i.postimg.cc/VkKTnMM9/agave-logo-talc-1.png" width="250" />
-  </a>
-</p>
+    <img alt="Logo" src="https://i.postimg.cc/7hwHrvJP/Trath-Logo.png" width="90" />
+    <img alt="Trath" src="https://raw.githubusercontent.com/mirmohmmadluqman/Trath/9aef887e00a2a99b7ae857572813e9171faaf134/text.svg" width="250" />
 
-[![Agave validator](https://img.shields.io/crates/v/agave-validator.svg)](https://crates.io/crates/agave-validator)
+  </a> 
+</p> 
+
 [![Agave documentation](https://docs.rs/agave-validator/badge.svg)](https://docs.rs/agave-validator)
 [![Build status](https://badge.buildkite.com/b2b925facfdbb575573084bb4b7e1f1ce7f395239672941bf7.svg?branch=master)](https://buildkite.com/anza/agave-secondary)
 [![Release status](https://github.com/anza-xyz/agave/actions/workflows/release.yml/badge.svg)](https://github.com/anza-xyz/agave/actions/workflows/release.yml)
