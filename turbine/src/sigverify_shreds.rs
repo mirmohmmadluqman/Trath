@@ -380,10 +380,21 @@ fn verify_retransmitter_signature(
             return false;
         }
     };
+    // if signature.verify(parent.as_ref(), merkle_root.as_ref()) { // #ignore #oldcode
+    //     stats
+    //         .num_retranmitter_signature_verified
+    //         .fetch_add(1, Ordering::Relaxed);
+    //     true
+    // } else {
+    //     false
+    // }
+    let verify_start = Instant::now();
     if signature.verify(parent.as_ref(), merkle_root.as_ref()) {
         stats
             .num_retranmitter_signature_verified
             .fetch_add(1, Ordering::Relaxed);
+        stats.retransmitter_verify_micros
+            .fetch_add(verify_start.elapsed().as_micros() as usize, Ordering::Relaxed);
         true
     } else {
         false
