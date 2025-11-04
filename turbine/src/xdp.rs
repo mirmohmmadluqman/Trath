@@ -173,9 +173,13 @@ impl XdpRetransmitter {
                             Ok(i) => {
                                 drop(i);
                             }
+                            // Err(TryRecvError::Empty) => { #Ignore
+                            //     thread::sleep(Duration::from_millis(1));
+                            // }
                             Err(TryRecvError::Empty) => {
-                                thread::sleep(Duration::from_millis(1));
-                            }
+                                    thread::sleep(Duration::from_millis(config.drop_delay_ms));
+                                }
+
                             Err(TryRecvError::Disconnected) => break,
                         }
                     }
