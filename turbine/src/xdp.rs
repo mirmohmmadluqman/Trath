@@ -16,6 +16,16 @@ use {
     std::{error::Error, net::SocketAddr, thread},
 };
 
+// #[derive(Clone, Debug)]   // #Ignore #oldcode
+// pub struct XdpConfig {
+//     pub interface: Option<String>,
+//     pub cpus: Vec<usize>,
+//     pub zero_copy: bool,
+//     // The capacity of the channel that sits between retransmit stage and each XDP thread that
+//     // enqueues packets to the NIC.
+//     pub rtx_channel_cap: usize,
+// }
+
 #[derive(Clone, Debug)]
 pub struct XdpConfig {
     pub interface: Option<String>,
@@ -24,12 +34,26 @@ pub struct XdpConfig {
     // The capacity of the channel that sits between retransmit stage and each XDP thread that
     // enqueues packets to the NIC.
     pub rtx_channel_cap: usize,
+    // New configurable delay for drop loop
+    pub drop_delay_ms: u64,
 }
+
 
 impl XdpConfig {
     // A nice round number
     const DEFAULT_RTX_CHANNEL_CAP: usize = 1_000_000;
 }
+
+// impl Default for XdpConfig { // #Ignore #Oldcode, Igonre this I've saved this only for testing and comparison
+//     fn default() -> Self {
+//         Self {
+//             interface: None,
+//             cpus: vec![],
+//             zero_copy: false,
+//             rtx_channel_cap: Self::DEFAULT_RTX_CHANNEL_CAP,
+//         }
+//     }
+// }
 
 impl Default for XdpConfig {
     fn default() -> Self {
@@ -38,20 +62,11 @@ impl Default for XdpConfig {
             cpus: vec![],
             zero_copy: false,
             rtx_channel_cap: Self::DEFAULT_RTX_CHANNEL_CAP,
+            drop_delay_ms: 1, // Default 1ms drop loop delay
         }
     }
 }
 
-impl XdpConfig {
-    pub fn new(interface: Option<impl Into<String>>, cpus: Vec<usize>, zero_copy: bool) -> Self {
-        Self {
-            interface: interface.map(|s| s.into()),
-            cpus,
-            zero_copy,
-            rtx_channel_cap: XdpConfig::DEFAULT_RTX_CHANNEL_CAP,
-        }
-    }
-}
 
 #[derive(Clone)]
 pub struct XdpSender {
