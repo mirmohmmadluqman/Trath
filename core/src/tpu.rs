@@ -51,8 +51,8 @@ use {
     },
     solana_streamer::{
         quic::{
-            spawn_server_with_cancel, spawn_simple_qos_server_with_cancel,
-            SimpleQosQuicStreamerConfig, SpawnServerResult, SwQosQuicStreamerConfig,
+            spawn_simple_qos_server, spawn_stake_wighted_qos_server, SimpleQosQuicStreamerConfig,
+            SpawnServerResult, SwQosQuicStreamerConfig,
         },
         streamer::StakedNodes,
     },
@@ -64,6 +64,7 @@ use {
         collections::HashMap,
         net::{SocketAddr, UdpSocket},
         num::NonZeroUsize,
+        path::PathBuf,
         sync::{atomic::AtomicBool, Arc, RwLock},
         thread::{self, JoinHandle},
         time::Duration,
@@ -164,6 +165,7 @@ impl Tpu {
         _generator_config: Option<GeneratorConfig>, /* vestigial code for replay invalidator */
         key_notifiers: Arc<RwLock<KeyUpdaters>>,
         banking_control_receiver: mpsc::Receiver<BankingControlMsg>,
+        scheduler_bindings: Option<(PathBuf, mpsc::Sender<BankingControlMsg>)>,
         cancel: CancellationToken,
     ) -> Self {
         let TpuSockets {
@@ -217,7 +219,7 @@ impl Tpu {
             endpoints: _,
             thread: tpu_vote_quic_t,
             key_updater: vote_streamer_key_updater,
-        } = spawn_simple_qos_server_with_cancel(
+        } = spawn_simple_qos_server(
             "solQuicTVo",
             "quic_streamer_tpu_vote",
             tpu_vote_quic_sockets,
@@ -236,7 +238,7 @@ impl Tpu {
                 endpoints: _,
                 thread: tpu_quic_t,
                 key_updater,
-            } = spawn_server_with_cancel(
+            } = spawn_stake_wighted_qos_server(
                 "solQuicTpu",
                 "quic_streamer_tpu",
                 transactions_quic_sockets,
@@ -259,7 +261,7 @@ impl Tpu {
                 endpoints: _,
                 thread: tpu_forwards_quic_t,
                 key_updater: forwards_key_updater,
-            } = spawn_server_with_cancel(
+            } = spawn_stake_wighted_qos_server(
                 "solQuicTpuFwd",
                 "quic_streamer_tpu_forwards",
                 transactions_forwards_quic_sockets,
@@ -346,6 +348,13 @@ impl Tpu {
             bank_forks.clone(),
             prioritization_fee_cache.clone(),
         );
+
+        #[cfg(unix)]
+        if let Some((path, banking_control_sender)) = scheduler_bindings {
+            super::scheduler_bindings_server::spawn(&path, banking_control_sender);
+        }
+        #[cfg(not(unix))]
+        assert!(scheduler_bindings.is_none());
 
         let SpawnForwardingStageResult {
             join_handle: forwarding_stage,
